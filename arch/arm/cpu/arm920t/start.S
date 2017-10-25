@@ -1,8 +1,8 @@
 /*
  *  armboot - Startup Code for ARM920 CPU-core
  *
- *  Copyright (c) 2001	Marius Gröger <mag@sysgo.de>
- *  Copyright (c) 2002	Alex Züpke <azu@sysgo.de>
+ *  Copyright (c) 2001	Marius Gr?er <mag@sysgo.de>
+ *  Copyright (c) 2002	Alex Z?ke <azu@sysgo.de>
  *  Copyright (c) 2002	Gary Jennejohn <garyj@denx.de>
  *
  * See file CREDITS for list of people who contributed to this
@@ -144,16 +144,32 @@ copyex:
 #  define pWTCON	0x15300000
 #  define INTMSK	0x14400008	/* Interupt-Controller base addresses */
 #  define CLKDIVN	0x14800014	/* clock divisor register */
+
 #else
 #  define pWTCON	0x53000000
 #  define INTMSK	0x4A000008	/* Interupt-Controller base addresses */
 #  define INTSUBMSK	0x4A00001C
 #  define CLKDIVN	0x4C000014	/* clock divisor register */
+
+# if defined(CONFIG_S3C2440) 	/* added by bhahn */
+#  define LOCKTIME	0x4C000000	/* PLL lock time counter */
+#  define CAMDIVN	0x4C000018	/* Camera Clock control */
+#  define MPLLCON	0x4C000004	/* MPLL control */
+# endif
+
 # endif
 
 	ldr	r0, =pWTCON
 	mov	r1, #0x0
 	str	r1, [r0]
+
+
+#if defined(CONFIG_S3C2440) && defined(CONFIG_WILTEX_GBOX) /* added by bhahn */
+	ldr	r0, =MPLLCON
+	mov	r1, #0x6e031	
+	str r1, [r0]
+#endif
+
 
 	/*
 	 * mask all IRQs by setting all bits in the INTMR - default
@@ -165,13 +181,43 @@ copyex:
 	ldr	r1, =0x3ff
 	ldr	r0, =INTSUBMSK
 	str	r1, [r0]
-# endif
+# elif defined(CONFIG_S3C2440) && defined(CONFIG_WILTEX_GBOX) /* added by bhahn */
+	ldr	r1, =0x7fff			// mask interrupt bit[0] ~ bit[14]
+	ldr	r0, =INTSUBMSK
+	str	r1, [r0]
+#endif
 
+
+
+#if defined(CONFIG_S3C2440) && defined(CONFIG_WILTEX_GBOX) /* added by bhahn */
+	/* FCLK:HCLK:PCLK = 1:4:8 */
+	ldr	r0, =CLKDIVN
+	mov	r1, #5
+	str	r1, [r0]
+#else
 	/* FCLK:HCLK:PCLK = 1:2:4 */
 	/* default FCLK is 120 MHz ! */
 	ldr	r0, =CLKDIVN
 	mov	r1, #3
 	str	r1, [r0]
+#endif
+
+
+#if defined(CONFIG_S3C2440) && defined(CONFIG_WILTEX_GBOX) /* added by bhahn */
+	ldr	r0, =LOCKTIME
+	mov	r1, #0xffffffff
+	str	r1, [r0]
+
+//	ldr	r0, =CAMDIVN
+//	mov r1, #0
+//	str r1, [r0]
+
+	ldr	r0, #0xC000107E		/* Set Async Mode */
+	mcr	p15, 0, r0, c1, c0, 0
+#endif
+
+
+
 #endif	/* CONFIG_S3C24X0 */
 
 	/*
@@ -184,10 +230,10 @@ copyex:
 
 /* Set stackpointer in internal RAM to call board_init_f */
 call_board_init_f:
-	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)
+	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)   /* bhahn : (CONFIG_SYS_SDRAM_BASE + 0x1000 - GENERATED_GBL_DATA_SIZE)*/
 	bic	sp, sp, #7 /* 8-byte alignment for ABI compliance */
 	ldr	r0,=0x00000000
-	bl	board_init_f
+	bl	board_init_f		/* bhahn : Call C function defined in arch/arm/lib/board.c with the argument in r0 */
 
 /*------------------------------------------------------------------------------*/
 

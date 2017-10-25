@@ -173,6 +173,9 @@ CPPFLAGS += -I$(OBJTREE)/include2 -I$(OBJTREE)/include
 endif
 
 CPPFLAGS += -I$(TOPDIR)/include
+# bhahn added for wiltek_gbox
+CPPFLAGS += -I$(TOPDIR)/board/wiltek_gbox
+
 CPPFLAGS += -fno-builtin -ffreestanding -nostdinc	\
 	-isystem $(gccincdir) -pipe $(PLATFORM_CPPFLAGS)
 
