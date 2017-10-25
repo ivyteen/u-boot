@@ -81,7 +81,7 @@
  * USB support (currently only works with D-cache off)
  ************************************************************/
 #define CONFIG_USB_OHCI
-#define CONFIG_USB_KEYBOARD
+//#define CONFIG_USB_KEYBOARD
 #define CONFIG_USB_STORAGE
 #define CONFIG_DOS_PARTITION
 
@@ -156,7 +156,7 @@
 
 #define CONFIG_SYS_LOAD_ADDR		0x30800000
 
-#define CONFIG_SYS_HZ			1000
+#define CONFIG_SYS_HZ			1000	/* SYS HZ value for timer */
 
 /* valid baudrates */
 #define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
@@ -210,10 +210,18 @@
 
 #else	/* Env configurations for GBOX */
 
-#define CONFIG_ENV_IS_IN_NAND
-#define CONFIG_ENV_SIZE			0x10000		// bhahn : 64KB for env
-#define CONFIG_ENV_OFFSET		0x0			// bhahn : need to set the actual value
+//#define CONFIG_ENV_IS_IN_NAND
+//#define CONFIG_ENV_SIZE			0x10000		// bhahn : 64KB for env
+//#define CONFIG_ENV_OFFSET		0x0			// bhahn : need to set the actual value
+
+//#define CONFIG_NAND_ENV_DST       //Defines address in RAM to which the nand_spl code should copy the
+									//environment. If redundant environment is used, it will be copied to
+									//CONFIG_NAND_ENV_DST + CONFIG_ENV_SIZE.
+
+#define CONFIG_ENV_IS_NOWHERE			// bhahn : temporary set to not store env in anywhere
+#define CONFIG_ENV_SIZE			0x10000	// bhahn : 64KB for env
 #define CONFIG_ENV_OVERWRITE
+
 
 #endif
 
