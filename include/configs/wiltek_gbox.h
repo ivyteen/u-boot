@@ -245,8 +245,11 @@
 #define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define NAND_MAX_CHIPS			1
 #define CONFIG_SYS_NAND_BASE		0x4E000000
-//#define CONFIG_NAND_SPL		// bhahn : add this feature someday for nand boot
 #endif
+
+//#define CONFIG_PRELOADER
+//#define CONFIG_NAND_SPL		// bhahn : add this feature someday for nand boot
+
 
 /*
  * File system
