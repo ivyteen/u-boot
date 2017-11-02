@@ -152,8 +152,11 @@
 /* may be activated as soon as s3c24x0 has print_cpuinfo support */
 /*#define CONFIG_DISPLAY_CPUINFO*/		/* Display cpu info */
 
-#define CONFIG_SYS_MEMTEST_START	0x30000000	/* memtest works on */
-#define CONFIG_SYS_MEMTEST_END		0x31F00000	/* 32 MB in DRAM */
+#define CONFIG_SYS_MEMTEST_START	0x30800000	/* memtest works on */
+#define CONFIG_SYS_MEMTEST_END		0x30801000	/* memtest for 4KB */
+//#define CONFIG_SYS_MEMTEST_END		0x31F00000	/* 32 MB in DRAM */
+#define CONFIG_SYS_ALT_MEMTEST
+#define CONFIG_SYS_MEMTEST_SCRATCH	0x30801100
 
 #define CONFIG_SYS_LOAD_ADDR		0x30800000
 

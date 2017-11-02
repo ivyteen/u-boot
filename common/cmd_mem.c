@@ -27,6 +27,7 @@
  * Copied from FADS ROM, Dan Malek (dmalek@jlc.net)
  */
 
+
 #include <common.h>
 #include <command.h>
 #ifdef CONFIG_HAS_DATAFLASH
@@ -717,8 +718,11 @@ int do_mem_mtest (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 		for (j = 0; j < sizeof(bitpattern)/sizeof(bitpattern[0]); j++) {
 		    val = bitpattern[j];
 		    for(; val != 0; val <<= 1) {
+
 			*addr  = val;
+
 			*dummy  = ~val; /* clear the test data off of the bus */
+
 			readback = *addr;
 			if(readback != val) {
 			    printf ("FAILURE (data line): "
@@ -730,8 +734,10 @@ int do_mem_mtest (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 				return 1;
 			    }
 			}
+			
 			*addr  = ~val;
 			*dummy  = val;
+
 			readback = *addr;
 			if(readback != ~val) {
 			    printf ("FAILURE (data line): "
@@ -745,6 +751,7 @@ int do_mem_mtest (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 			}
 		    }
 		}
+		
 
 		/*
 		 * Based on code whose Original Author and Copyright
