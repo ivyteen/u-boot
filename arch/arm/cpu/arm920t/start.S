@@ -164,32 +164,25 @@ copyex:
 	str	r1, [r0]
 
 
-#if defined(CONFIG_S3C2440) && defined(CONFIG_WILTEX_GBOX) /* added by bhahn */
-	ldr	r0, =MPLLCON
-	mov	r1, #0x6e031	
-	str r1, [r0]
-#endif
-
-
+	ldr	r1, =0xffffffff
+	ldr	r0, =INTMSK
+	str	r1, [r0]
 	/*
 	 * mask all IRQs by setting all bits in the INTMR - default
 	 */
-	mov	r1, #0xffffffff
-	ldr	r0, =INTMSK
-	str	r1, [r0]
 # if defined(CONFIG_S3C2410)
 	ldr	r1, =0x3ff
 	ldr	r0, =INTSUBMSK
 	str	r1, [r0]
-# elif defined(CONFIG_S3C2440) && defined(CONFIG_WILTEX_GBOX) /* added by bhahn */
+#else 
+#if defined(CONFIG_S3C2440) /* added by bhahn */
 	ldr	r1, =0x7fff			// mask interrupt bit[0] ~ bit[14]
 	ldr	r0, =INTSUBMSK
 	str	r1, [r0]
 #endif
+#endif
 
-
-
-#if defined(CONFIG_S3C2440) && defined(CONFIG_WILTEX_GBOX) /* added by bhahn */
+#if defined(CONFIG_WILTEK_GBOX) /* added by bhahn */
 	/* FCLK:HCLK:PCLK = 1:4:8 */
 	ldr	r0, =CLKDIVN
 	mov	r1, #5
@@ -203,21 +196,6 @@ copyex:
 #endif
 
 
-#if defined(CONFIG_S3C2440) && defined(CONFIG_WILTEX_GBOX) /* added by bhahn */
-	ldr	r0, =LOCKTIME
-	mov	r1, #0xffffffff
-	str	r1, [r0]
-
-//	ldr	r0, =CAMDIVN
-//	mov r1, #0
-//	str r1, [r0]
-
-	ldr	r0, #0xC000107E		/* Set Async Mode */
-	mcr	p15, 0, r0, c1, c0, 0
-#endif
-
-
-
 #endif	/* CONFIG_S3C24X0 */
 
 	/*
@@ -227,6 +205,7 @@ copyex:
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	bl	cpu_init_crit
 #endif
+
 
 /* Set stackpointer in internal RAM to call board_init_f */
 call_board_init_f:
@@ -272,6 +251,9 @@ copy_loop:
 	 * fix .rel.dyn relocations
 	 */
 	ldr	r0, _TEXT_BASE		/* r0 <- Text base */
+							/* bhahn : converted to "ldr r0, [pc, #-156]" by assembler */
+							/* "pc - 156" means _TEXT_BASE label, so CONFIG_SYS_TEXT_BASE is into r0 */
+
 	sub	r9, r6, r0		/* r9 <- relocation offset */
 	ldr	r10, _dynsym_start_ofs	/* r10 <- sym table ofs */
 	add	r10, r10, r0		/* r10 <- sym table in FLASH */
@@ -337,6 +319,7 @@ clbss_l:str	r2, [r0]		/* clear loop...		    */
 _nand_boot_ofs:
 	.word nand_boot
 #else
+
 	ldr	r0, _board_init_r_ofs
 	adr	r1, _start
 	add	lr, r0, r1
@@ -388,6 +371,7 @@ cpu_init_crit:
 	orr	r0, r0, #0x00000002	@ set bit 2 (A) Align
 	orr	r0, r0, #0x00001000	@ set bit 12 (I) I-Cache
 	mcr	p15, 0, r0, c1, c0, 0
+
 
 	/*
 	 * before relocating, we have to setup RAM timing

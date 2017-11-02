@@ -88,18 +88,20 @@ int board_early_init_f(void)
 	struct s3c24x0_gpio * const gpio = s3c24x0_get_base_gpio();
 
 
-	unsigned int test = 0xFFFFFFFF;
 
 	/* to reduce PLL lock time, adjust the LOCKTIME register */
-	writel(0xFFFFFF, &clk_power->locktime);  /* bhahn : write 0xFFFFFFFF to the address for LOCKTIME(0x4C000000) */
+	writel(0xFFFFFFFF, &clk_power->locktime);  /* bhahn : write 0xFFFFFFFF to the address for LOCKTIME(0x4C000000) */
 
 	pll_setting((void*)clk_power);
 
 	/* set up the I/O ports */
 
 	writel(0x007FFFFF, &gpio->gpacon);
-	writel(0x00044555, &gpio->gpbcon);
+
+	writel(0x00154000, &gpio->gpbcon);
 	writel(0x000007FF, &gpio->gpbup);
+	writel(0x00000780, &gpio->gpbdat);
+
 	writel(0xAAAAAAAA, &gpio->gpccon);
 	writel(0x0000FFFF, &gpio->gpcup);
 	writel(0xAAAAAAAA, &gpio->gpdcon);
@@ -110,8 +112,11 @@ int board_early_init_f(void)
 	writel(0x000000FF, &gpio->gpfup);
 	writel(0xFF95FFBA, &gpio->gpgcon);
 	writel(0x0000FFFF, &gpio->gpgup);
-	writel(0x002AFAAA, &gpio->gphcon);
+	writel(0x00000AA0, &gpio->gphcon); // setting for uart ports
 	writel(0x000007FF, &gpio->gphup);
+
+
+
 
 	
 	return 0;

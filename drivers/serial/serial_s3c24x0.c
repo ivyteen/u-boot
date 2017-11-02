@@ -307,7 +307,11 @@ INIT_S3C_SERIAL_STRUCTURE(0, "s3ser0", "S3UART1");
 DECLARE_S3C_SERIAL_FUNCTIONS(1);
 struct serial_device s3c24xx_serial1_device =
 INIT_S3C_SERIAL_STRUCTURE(1, "s3ser1", "S3UART2");
+
+#if !defined(CONFIG_WILTEK_GBOX)
 DECLARE_S3C_SERIAL_FUNCTIONS(2);
 struct serial_device s3c24xx_serial2_device =
 INIT_S3C_SERIAL_STRUCTURE(2, "s3ser2", "S3UART3");
+#endif
+
 #endif /* CONFIG_SERIAL_MULTI */
