@@ -96,7 +96,7 @@ int board_early_init_f(void)
 
 	/* set up the I/O ports */
 
-	writel(0x007FFFFF, &gpio->gpacon);
+	writel(0x007FFFFF, &gpio->gpacon); // setting all pins for own functions 
 
 	writel(0x00154000, &gpio->gpbcon);
 	writel(0x000007FF, &gpio->gpbup);

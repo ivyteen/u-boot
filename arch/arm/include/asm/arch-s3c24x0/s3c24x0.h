@@ -165,17 +165,22 @@ struct s3c2410_nand {
 #ifdef CONFIG_S3C2440
 /* NAND FLASH (see S3C2440 manual chapter 6) */
 struct s3c2440_nand {
-	u32	nfconf;
-	u32	nfcont;
-	u32	nfcmd;
-	u32	nfaddr;
-	u32	nfdata;
-	u32	nfeccd0;
-	u32	nfeccd1;
-	u32	nfeccd;
-	u32	nfstat;
-	u32	nfstat0;
-	u32	nfstat1;
+	u32	nfconf;			/* NAND flash configuration */
+	u32	nfcont;			/* NAND flash control */
+	u32	nfcmd;			/* NAND flash command */
+	u32	nfaddr;			/* NAND flash address */
+	u32	nfdata;			/* NAND flash data */
+	u32	nfeccd0;		/* NAND flash main area ECC0/1 */
+	u32	nfeccd1;		/* NAND flash main area ECC2/3 */
+	u32	nfeccd;			/* NAND flash spare area ECC */
+	u32	nfstat;			/* NAND flash operation status */
+	u32	nfstat0;		/* NAND flash ECC status for I/O[7:0]*/
+	u32	nfstat1;		/* NAND flash ECC status for I/O[15:8]*/
+	u32	nfmecc0;		/* NAND flash main area ECC0 status */
+	u32	nfmecc1;		/* NAND flash main area ECC1 status */
+	u32	nfsecc;			/* NAND flash spare area ECC status */
+	u32	nfsblk;			/* NAND flash start block address */	
+	u32 nfeblk;			/* NAND flash end block address */
 };
 #endif
 
