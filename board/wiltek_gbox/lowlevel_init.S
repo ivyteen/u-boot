@@ -77,14 +77,14 @@
 #define B0_Tacp			0x0
 #define B0_PMC			0x0	/* normal */
 
-/* BANK1CON */
-#define B1_Tacs			0x0	/*  0clk */
-#define B1_Tcos			0x0	
-#define B1_Tacc			0x0	
-#define B1_Tcoh			0x0	
-#define B1_Tah			0x0	
-#define B1_Tacp			0x0
-#define B1_PMC			0x0
+/* BANK1CON  - Connected to W5100 in Wiltek GBOX */
+#define B1_Tacs			0x1	/* Address set-up time before nGCSn - 1clk  */
+#define B1_Tcos			0x0	/* Chip selection set-up time before nOE - 0 clock */
+#define B1_Tacc			0x6	/* Access cycle - 10 clocks */
+#define B1_Tcoh			0x0	/* Chip select hold time after nOE - 0 clock */
+#define B1_Tah			0x3	/* Address hold time after nGCSn - 4 clocks */
+#define B1_Tacp			0x0	/* Page mode access cycle @ page mode */
+#define B1_PMC			0x0	/* Page mode configuration */
 
 #define B2_Tacs			0x0
 #define B2_Tcos			0x0
