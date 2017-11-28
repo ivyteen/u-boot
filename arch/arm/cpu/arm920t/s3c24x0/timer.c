@@ -53,6 +53,9 @@ int timer_init(void)
 {
 	struct s3c24x0_timers *timers = s3c24x0_get_base_timers();
 	ulong tmr;
+#ifdef CONFIG_WILTEK_GBOX
+	ulong tcfg1 = 0;
+#endif
 
 	/* use PWM Timer 4 because it has no output */
 	/* prescaler for Timer 4 is 16 */
@@ -66,6 +69,15 @@ int timer_init(void)
 		timer_load_val = get_PCLK() / (2 * 16 * 100);
 		timer_clk = get_PCLK() / (2 * 16);
 	}
+
+
+#ifdef CONFIG_WILTEK_GBOX
+	tcfg1 = readl(&timers->tcfg1);
+	tcfg1 = tcfg1 & ~(0x000F0000);
+	writel(tcfg1, &timers->tcfg1);
+	debug("timer tcfg0:%X, tcfg1:%X\n",readl(&timers->tcfg0),readl(&timers->tcfg1));
+#endif
+
 	/* load value for 10 ms timeout */
 	lastdec = timer_load_val;
 	writel(timer_load_val, &timers->tcntb4);
@@ -107,6 +119,7 @@ void __udelay (unsigned long usec)
 	tmo = usec / 1000;
 	tmo *= (timer_load_val * 100);
 	tmo /= 1000;
+
 
 	while ((ulong) (get_ticks() - start) < tmo)
 		/*NOP*/;
