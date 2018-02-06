@@ -30,6 +30,14 @@
 #include <asm/arch/s3c24x0_cpu.h>
 #include <asm/io.h>
 
+
+#ifdef CONFIG_WILTEK_GBOX
+#define U_M_MDIV	0x3C
+#define U_M_PDIV	0x4
+#define U_M_SDIV	0x2
+#endif
+
+
 int usb_cpu_init(void)
 {
 	struct s3c24x0_clock_power *clk_power = s3c24x0_get_base_clock_power();
@@ -39,14 +47,24 @@ int usb_cpu_init(void)
 	 * Set the 48 MHz UPLL clocking. Values are taken from
 	 * "PLL value selection guide", 6-23, s3c2400_UM.pdf.
 	 */
+
+#ifdef CONFIG_WILTEK_GBOX
+	/* configure UPLL */
+	writel((U_M_MDIV << 12) + (U_M_PDIV << 4) + U_M_SDIV, &clk_power->upllcon);
+#else
 	writel((40 << 12) + (1 << 4) + 2, &clk_power->upllcon);
+#endif
 	/* 1 = use pads related USB for USB host */
 	writel(readl(&gpio->misccr) | 0x8, &gpio->misccr);
 
 	/*
 	 * Enable USB host clock.
 	 */
+#ifdef CONFIG_WILTEK_GBOX
+	writel(readl(&clk_power->clkcon) | (1 << 6), &clk_power->clkcon);
+#else
 	writel(readl(&clk_power->clkcon) | (1 << 4), &clk_power->clkcon);
+#endif
 
 	return 0;
 }
@@ -55,14 +73,27 @@ int usb_cpu_stop(void)
 {
 	struct s3c24x0_clock_power *clk_power = s3c24x0_get_base_clock_power();
 	/* may not want to do this */
+
+
+#ifdef CONFIG_WILTEK_GBOX
+	writel(readl(&clk_power->clkcon) & ~(1 << 6), &clk_power->clkcon);
+#else
 	writel(readl(&clk_power->clkcon) & ~(1 << 4), &clk_power->clkcon);
+#endif
+
 	return 0;
 }
 
 int usb_cpu_init_fail(void)
 {
 	struct s3c24x0_clock_power *clk_power = s3c24x0_get_base_clock_power();
+
+#ifdef CONFIG_WILTEK_GBOX
+	writel(readl(&clk_power->clkcon) & ~(1 << 6), &clk_power->clkcon);
+#else
 	writel(readl(&clk_power->clkcon) & ~(1 << 4), &clk_power->clkcon);
+#endif
+
 	return 0;
 }
 

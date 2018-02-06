@@ -461,7 +461,11 @@ void board_init_r (gd_t *id, ulong dest_addr)
 	serial_initialize();
 #endif
 
+#ifdef CONFIG_WILTEK_GBOX
+	printf ("GBOX UBOOT Now running at: %08lx\n", dest_addr);
+#else
 	debug ("Now running in RAM - U-Boot at: %08lx\n", dest_addr);
+#endif
 
 #ifdef CONFIG_LOGBUFFER
 	logbuff_init_ptrs ();

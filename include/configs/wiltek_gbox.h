@@ -92,6 +92,9 @@
  * USB support (currently only works with D-cache off)
  ************************************************************/
 #define CONFIG_USB_OHCI
+//#define CONFIG_USB_OHCI_NEW
+//#define CONFIG_SYS_USB_OHCI_CPU_INIT
+//#define CONFIG_SYS_USB_OHCI_MAX_ROOT_PORTS 1
 //#define CONFIG_USB_KEYBOARD
 #define CONFIG_USB_STORAGE
 #define CONFIG_DOS_PARTITION
@@ -284,9 +287,11 @@
 
 /* additions for new relocation code, must be added to all boards */
 #define CONFIG_SYS_SDRAM_BASE	PHYS_SDRAM_1
-#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x1000 - \
-				GENERATED_GBL_DATA_SIZE)  /* bhahn : GENERATED_GBL_DATA_SIZE is defined at build time 
-											by kbuild through lib/asm-offset.c, and written in include include/generated/generic-asm-offsets.h */
+
+/* bhahn : GENERATED_GBL_DATA_SIZE is defined at build time by kbuild through lib/asm-offset.c, and written in include include/generated/generic-asm-offsets.h */
+//#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x1000 - GENERATED_GBL_DATA_SIZE) 
+#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x56000 - GENERATED_GBL_DATA_SIZE) 
+										 
 
 #define CONFIG_BOARD_EARLY_INIT_F
 #define BOARD_LATE_INIT

@@ -44,6 +44,14 @@
 #include <usb.h>
 #include "usb_ohci.h"
 
+#ifdef CONFIG_WILTEK_GBOX
+#define U_M_MDIV	0x3C
+#define U_M_PDIV	0x4
+#define U_M_SDIV	0x2
+#endif
+
+
+
 #define OHCI_USE_NPS		/* force NoPowerSwitching mode */
 #undef OHCI_VERBOSE_DEBUG	/* not always helpful */
 
@@ -1666,13 +1674,20 @@ int usb_lowlevel_init(void)
 	 * Set the 48 MHz UPLL clocking. Values are taken from
 	 * "PLL value selection guide", 6-23, s3c2400_UM.pdf.
 	 */
+#ifndef CONFIG_WILTEK_GBOX
 	clk_power->upllcon = ((40 << 12) + (1 << 4) + 2);
+#endif
+
 	gpio->misccr |= 0x8;	/* 1 = use pads related USB for USB host */
 
 	/*
 	 * Enable USB host clock.
 	 */
+#ifdef CONFIG_WILTEK_GBOX
+	clk_power->clkcon |= (1 << 6);
+#else
 	clk_power->clkcon |= (1 << 4);
+#endif
 
 	memset(&gohci, 0, sizeof(struct ohci));
 	memset(&urb_priv, 0, sizeof(struct urb_priv));
@@ -1704,12 +1719,17 @@ int usb_lowlevel_init(void)
 	gohci.regs = (struct ohci_regs *)S3C24X0_USB_HOST_BASE;
 
 	gohci.flags = 0;
-	gohci.slot_name = "s3c2400";
+	gohci.slot_name = "GBOX_2440";
 
 	if (hc_reset(&gohci) < 0) {
 		hc_release_ohci(&gohci);
 		/* Initialization failed */
+
+#ifdef CONFIG_WILTEK_GBOX
+		clk_power->clkcon &= ~(1 << 6);
+#else
 		clk_power->clkcon &= ~(1 << 4);
+#endif
 		return -1;
 	}
 
@@ -1722,7 +1742,13 @@ int usb_lowlevel_init(void)
 		err("can't start usb-%s", gohci.slot_name);
 		hc_release_ohci(&gohci);
 		/* Initialization failed */
+
+#ifdef CONFIG_WILTEK_GBOX
+		clk_power->clkcon &= ~(1 << 6);
+#else
 		clk_power->clkcon &= ~(1 << 4);
+#endif
+
 		return -1;
 	}
 #ifdef	DEBUG
@@ -1748,7 +1774,11 @@ int usb_lowlevel_stop(void)
 	/* call hc_release_ohci() here ? */
 	hc_reset(&gohci);
 	/* may not want to do this */
+#ifdef CONFIG_WILTEK_GBOX
+		clk_power->clkcon &= ~(1 << 6);
+#else
 	clk_power->clkcon &= ~(1 << 4);
+#endif
 	return 0;
 }
 
