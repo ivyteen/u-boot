@@ -37,6 +37,7 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+
 /*
  * High Level Configuration Options
  * (easy to change)
@@ -51,7 +52,9 @@
  
 #define CONFIG_SYS_TEXT_BASE	0x30000000  // For loading to RAM directly by WICE
 
-#define CONFIG_SYS_ARM_CACHE_WRITETHROUGH
+//#define CONFIG_SYS_ARM_CACHE_WRITETHROUGH
+#define CONFIG_SYS_NO_ICACHE
+#define CONFIG_SYS_NO_DCACHE
 
 /* input clock of PLL (the input clock) */
 #define CONFIG_SYS_CLK_FREQ		16934400	/* freq for GBOX */
@@ -286,5 +289,6 @@
 											by kbuild through lib/asm-offset.c, and written in include include/generated/generic-asm-offsets.h */
 
 #define CONFIG_BOARD_EARLY_INIT_F
+#define BOARD_LATE_INIT
 
 #endif /* __CONFIG_H */

@@ -53,17 +53,11 @@ static inline void pll_delay(unsigned long loops)
 	  "bne 1b":"=r" (loops):"0" (loops));
 }
 
-static void pll_setting(void* setting)
+static void pll_setting(struct s3c24x0_clock_power* setting)
 {
 
-	struct s3c24x0_clock_power * clk_power = (struct s3c24x0_clock_power*)setting;
+	struct s3c24x0_clock_power * clk_power = setting;
 
-	/* configure MPLL */
-	writel((M_MDIV << 12) + (M_PDIV << 4) + M_SDIV,
-	       &clk_power->mpllcon);
-
-	/* some delay between MPLL and UPLL */
-	pll_delay(4000);
 
 	/* configure UPLL */
 	writel((U_M_MDIV << 12) + (U_M_PDIV << 4) + U_M_SDIV,
@@ -72,6 +66,13 @@ static void pll_setting(void* setting)
 	/* some delay between MPLL and UPLL */
 	pll_delay(8000);
 
+
+	/* configure MPLL */
+	writel((M_MDIV << 12) + (M_PDIV << 4) + M_SDIV,
+	       &clk_power->mpllcon);
+
+	/* some delay between MPLL and UPLL */
+	pll_delay(4000);
 
 	return;
 }
@@ -88,11 +89,11 @@ int board_early_init_f(void)
 	struct s3c24x0_gpio * const gpio = s3c24x0_get_base_gpio();
 
 
+	pll_setting(clk_power);
 
 	/* to reduce PLL lock time, adjust the LOCKTIME register */
 	writel(0xFFFFFFFF, &clk_power->locktime);  /* bhahn : write 0xFFFFFFFF to the address for LOCKTIME(0x4C000000) */
 
-	pll_setting((void*)clk_power);
 
 	/* set up the I/O ports */
 
@@ -122,10 +123,45 @@ int board_early_init_f(void)
 	return 0;
 }
 
+int board_late_init(void)
+{
+#if 0
+
+	ulong fclk = 0;
+	ulong hclk = 0;
+	ulong pclk = 0;
+	ulong uclk = 0;
+	ulong bankcon1 = 0;
+
+	fclk = get_FCLK();
+	hclk = get_HCLK();
+	pclk = get_PCLK();
+	uclk = get_UCLK();
+	
+	debug("[%s] Check clock set \n",__FUNCTION__);
+	debug("[%s] FCLK : %d \n",__FUNCTION__, fclk);
+	debug("[%s] HCLK : %d \n",__FUNCTION__, hclk);
+	debug("[%s] PCLK : %d \n",__FUNCTION__, pclk);
+	debug("[%s] UCLK : %d \n",__FUNCTION__ ,uclk);
+
+	bankcon1 = *((volatile unsigned int*)(0x48000008));
+	debug("[%s] BANKCON1 : %X \n",__FUNCTION__ ,bankcon1);
+	
+#endif
+
+	debug("[%s] GBOX board late init\n",__FUNCTION__);
+
+	timer_init();
+
+	return 0;
+}
+
+
+
 int board_init(void)
 {
 	/* arch number of SMDK2440-Board */
-	gd->bd->bi_arch_number = MACH_TYPE_SMDK2440;
+	gd->bd->bi_arch_number = MACH_TYPE_S3C2440;
 
 	/* adress of boot parameters */
 	gd->bd->bi_boot_params = 0x30000100;

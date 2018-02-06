@@ -243,7 +243,11 @@ init_fnc_t *init_sequence[] = {
 #if defined(CONFIG_BOARD_EARLY_INIT_F)
 	board_early_init_f,
 #endif
+
+#ifndef CONFIG_WILTEK_GBOX
 	timer_init,		/* initialize timer */
+#endif
+
 #ifdef CONFIG_FSL_ESDHC
 	get_clocks,
 #endif

@@ -48,6 +48,10 @@ PLATFORM_LDFLAGS =
 
 HOSTCFLAGS	= -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer \
 		  $(HOSTCPPFLAGS)
+
+#bhahn for gdb debug
+HOSTCFLAGS += -g
+
 HOSTSTRIP	= strip
 
 #
