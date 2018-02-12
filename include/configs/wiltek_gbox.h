@@ -37,6 +37,7 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+//#define DEBUG
 
 /*
  * High Level Configuration Options
@@ -69,16 +70,11 @@
 /*
  * Hardware drivers
  */
-//#define CONFIG_NET_MULTI
-//#define CONFIG_CS8900		/* we have a CS8900 on-board */
-//#define CONFIG_CS8900_BASE	0x19000300
-//#define CONFIG_CS8900_BUS16	/* the Linux driver does accesses as shorts */
-
-#define CONFIG_DRIVER_W5100 1
-#define W5100_BASE      0x08000000
-//#define W5100_MAX_CHANNEL   4
-//#define W5100_TMSR_ARRAY    {32,32}
-//#define W5100_RMSR_ARRAY    {32,32}
+#define CONFIG_NET_MULTI
+//#define CONFIG_DRIVER_W5100 1
+//#define W5100_BASE      0x08000000
+#define CONFIG_USB_HOST_ETHER
+#define CONFIG_USB_ETHER_ASIX
 
 
 /*
@@ -141,7 +137,7 @@
 #define CONFIG_ZERO_BOOTDELAY_CHECK
 
 
-#define	CONFIG_ETHADDR		00:08:dc:00:00:00
+//#define	CONFIG_ETHADDR		00:08:dc:00:00:00
 #define CONFIG_NETMASK		255.255.255.0
 #define CONFIG_IPADDR		192.168.1.3
 #define CONFIG_SERVERIP		192.168.1.2
@@ -290,7 +286,7 @@
 
 /* bhahn : GENERATED_GBL_DATA_SIZE is defined at build time by kbuild through lib/asm-offset.c, and written in include include/generated/generic-asm-offsets.h */
 //#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x1000 - GENERATED_GBL_DATA_SIZE) 
-#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x56000 - GENERATED_GBL_DATA_SIZE) 
+#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x64000 - GENERATED_GBL_DATA_SIZE) 
 										 
 
 #define CONFIG_BOARD_EARLY_INIT_F

@@ -195,9 +195,11 @@ int eth_register(struct eth_device *dev)
 		eth_current = eth_devices = dev;
 		eth_current_changed();
 	} else {
+#ifndef CONFIG_WILTEK_GBOX /* bhahn : Work-around to avoid abort exception, when usb reset with eth device connected */
 		for (d=eth_devices; d->next!=eth_devices; d=d->next)
 			;
 		d->next = dev;
+#endif
 	}
 
 	dev->state = ETH_STATE_INIT;
