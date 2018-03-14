@@ -39,6 +39,7 @@
 
 .globl _start
 _start:	b	start_code
+#ifndef CONFIG_NAND_SPL /* bhahn added */
 	ldr	pc, _undefined_instruction
 	ldr	pc, _software_interrupt
 	ldr	pc, _prefetch_abort
@@ -54,6 +55,7 @@ _data_abort:		.word data_abort
 _not_used:		.word not_used
 _irq:			.word irq
 _fiq:			.word fiq
+#endif /* CONFIG_NAND_SPL */
 
 	.balignl 16,0xdeadbeef
 
@@ -209,7 +211,7 @@ copyex:
 
 /* Set stackpointer in internal RAM to call board_init_f */
 call_board_init_f:
-	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)   /* bhahn : (CONFIG_SYS_SDRAM_BASE + 0x1000 - GENERATED_GBL_DATA_SIZE)*/
+	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)
 	bic	sp, sp, #7 /* 8-byte alignment for ABI compliance */
 	ldr	r0,=0x00000000
 	bl	board_init_f		/* bhahn : Call C function defined in arch/arm/lib/board.c with the argument in r0 */
@@ -225,6 +227,7 @@ call_board_init_f:
  */
 	.globl	relocate_code
 relocate_code:
+#ifndef CONFIG_NAND_SPL
 	mov	r4, r0	/* save addr_sp */
 	mov	r5, r1	/* save addr of gd */
 	mov	r6, r2	/* save addr of destination */
@@ -245,6 +248,7 @@ copy_loop:
 	stmia	r1!, {r9-r10}		/* copy to   target address [r1]    */
 	cmp	r0, r2			/* until source end address [r2]    */
 	blo	copy_loop
+#endif /* CONFIG_NAND_SPL */
 
 #ifndef CONFIG_PRELOADER
 	/*
@@ -386,6 +390,9 @@ cpu_init_crit:
 	mov	pc, lr
 #endif /* CONFIG_SKIP_LOWLEVEL_INIT */
 
+
+
+#ifndef CONFIG_NAND_SPL
 /*
  *************************************************************************
  *
@@ -548,3 +555,4 @@ fiq:
 	bl	do_fiq
 
 #endif
+#endif /* CONFIG_NAND_SPL */
