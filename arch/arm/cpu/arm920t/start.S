@@ -55,8 +55,10 @@ _data_abort:		.word data_abort
 _not_used:		.word not_used
 _irq:			.word irq
 _fiq:			.word fiq
-#endif /* CONFIG_NAND_SPL */
-
+_pad:			.word 0x12345678 /* now 16*4=64 */
+#else /* CONFIG_NAND_SPL */
+	. = _start + 64
+#endif
 	.balignl 16,0xdeadbeef
 
 
@@ -211,7 +213,15 @@ copyex:
 
 /* Set stackpointer in internal RAM to call board_init_f */
 call_board_init_f:
+#ifdef CONFIG_WILTEK_GBOX
+#ifdef CONFIG_NAND_SPL
+	ldr	sp, =(CONFIG_SYS_SPL_SP_ADDR)
+#else
 	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)
+#endif
+#else
+	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)
+#endif
 	bic	sp, sp, #7 /* 8-byte alignment for ABI compliance */
 	ldr	r0,=0x00000000
 	bl	board_init_f		/* bhahn : Call C function defined in arch/arm/lib/board.c with the argument in r0 */
@@ -307,9 +317,10 @@ clbss_l:str	r2, [r0]		/* clear loop...		    */
 	add	r0, r0, #4
 	cmp	r0, r1
 	bne	clbss_l
-
+#ifndef CONFIG_NAND_SPL
 	bl coloured_LED_init
 	bl red_LED_on
+#endif
 #endif
 
 /*

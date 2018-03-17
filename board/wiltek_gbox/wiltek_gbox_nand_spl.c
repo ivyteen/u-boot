@@ -33,6 +33,6 @@
 void board_init_f(unsigned long bootflag)
 {
 	// bhahn - Actually the param values are no use
-	relocate_code(CONFIG_SYS_TEXT_BASE - TOTAL_MALLOC_LEN, NULL,
-			CONFIG_SYS_TEXT_BASE);
+	relocate_code(CONFIG_SYS_TEXT_BASE - TOTAL_MALLOC_LEN, NULL, CONFIG_SYS_TEXT_BASE);
+
 }

@@ -31,8 +31,8 @@ include $(TOPDIR)/nand_spl/board/$(BOARDDIR)/config.mk
 
 nandobj	:= $(OBJTREE)/nand_spl/
 
-AFLAGS	+= -g -DCONFIG_NAND_SPL
-CFLAGS	+= -g -DCONFIG_NAND_SPL
+AFLAGS	+= -g -DCONFIG_NAND_SPL $(BOARD_AFLAGS)
+CFLAGS	+= -g -DCONFIG_NAND_SPL $(BOARD_CFLAGS)
 
 
 LDSCRIPT= $(TOPDIR)/nand_spl/board/$(BOARDDIR)/u-boot.lds

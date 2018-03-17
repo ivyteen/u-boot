@@ -1053,8 +1053,8 @@ smdk6400_config	:	unconfig
 #########################################################################
 wiltek_gbox_config	: unconfig
 	$(MKCONFIG) wiltek_gbox arm arm920t wiltek_gbox - s3c24x0
-#	echo "#define CONFIG_NAND_U_BOOT" >> $(obj)include/config.h
-#	echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
+	echo "#define CONFIG_NAND_U_BOOT" >> $(obj)include/config.h
+	echo "CONFIG_NAND_U_BOOT = y" >> $(obj)include/config.mk
 
 #========================================================================
 # Nios

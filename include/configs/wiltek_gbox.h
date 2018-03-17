@@ -37,9 +37,9 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define DEBUG
-#define CONFIG_MTD_DEBUG
-#define CONFIG_MTD_DEBUG_VERBOSE 1
+//#define DEBUG
+//#define CONFIG_MTD_DEBUG
+//#define CONFIG_MTD_DEBUG_VERBOSE 1
 
 
 /*
@@ -55,9 +55,6 @@
 #define CONFIG_SYS_NO_FLASH		/* GBOX has no flash(CFI, NOR) */
 
  
-#define CONFIG_SYS_TEXT_BASE	0x30000000  // For loading to RAM directly by WICE
-//#define CONFIG_SYS_TEXT_BASE	0x00000000  // For loading to RAM directly by WICE
-
 //#define CONFIG_SYS_ARM_CACHE_WRITETHROUGH
 #define CONFIG_SYS_NO_ICACHE
 #define CONFIG_SYS_NO_DCACHE
@@ -208,6 +205,10 @@
 //#define PHYS_FLASH_1		0x00000000 /* Flash Bank #0 */
 //#define CONFIG_SYS_FLASH_BASE	PHYS_FLASH_1
 
+/* additions for new relocation code, must be added to all boards */
+#define CONFIG_SYS_SDRAM_BASE	PHYS_SDRAM_1
+
+
 /*-----------------------------------------------------------------------
  * FLASH and environment organization
  */
@@ -246,11 +247,10 @@
 /*
  * NAND configuration
  */
-#ifdef CONFIG_CMD_NAND
 #define CONFIG_NAND_S3C2440
-#define CONFIG_SYS_NAND_PAGE_SIZE	2048
-#define	CONFIG_SYS_NAND_BLOCK_SIZE	(128 * 1024)
-#define CONFIG_SYS_NAND_PAGE_COUNT	64
+#define CONFIG_SYS_NAND_PAGE_SIZE	2048		// Byte size of 1 page
+#define	CONFIG_SYS_NAND_BLOCK_SIZE	(128 * 1024) // Byte size of 1 block
+#define CONFIG_SYS_NAND_PAGE_COUNT	64	// How many pages in 1 block
 
 #define CONFIG_S3C2440_NAND_HWECC
 #define CONFIG_SYS_NAND_ECCSIZE		CONFIG_SYS_NAND_PAGE_SIZE
@@ -258,7 +258,30 @@
 #define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define NAND_MAX_CHIPS			1
 #define CONFIG_SYS_NAND_BASE		0x4E000000
-#endif
+
+#define CONFIG_SYS_NAND_U_BOOT_OFFS	(4 * 1024)	/* Offset of U-Boot image in NAND - has to be aligned to a page addr */
+
+#define CONFIG_SYS_NAND_U_BOOT_SIZE 	(512*1024)
+#define CONFIG_SYS_NAND_U_BOOT_DST		CONFIG_SYS_SDRAM_BASE 
+#define CONFIG_SYS_NAND_U_BOOT_START	CONFIG_SYS_NAND_U_BOOT_DST	/* NUB start-addr     */
+
+#define CONFIG_SYS_NAND_BAD_BLOCK_POS	0
+#define CONFIG_SYS_NAND_ECCSTEPS	(CONFIG_SYS_NAND_PAGE_SIZE / CONFIG_SYS_NAND_ECCSIZE)
+#define CONFIG_SYS_NAND_OOBSIZE	64
+#define CONFIG_SYS_NAND_ECCTOTAL	(CONFIG_SYS_NAND_ECCBYTES * CONFIG_SYS_NAND_ECCSTEPS)
+#define CONFIG_SYS_NAND_ECCPOS		{40, 41, 42, 43, 44, 45, 46, 47, \
+				 48, 49, 50, 51, 52, 53, 54, 55, \
+				 56, 57, 58, 59, 60, 61, 62, 63}
+
+
+#define CONFIG_ENV_IS_IN_NAND
+#define CONFIG_ENV_OFFSET		0x0080000	// bhahn : offset value in nand!!
+
+#define CONFIG_NAND_ENV_DST		(CONFIG_SYS_SDRAM_BASE + CONFIG_SYS_NAND_U_BOOT_SIZE)
+#define CONFIG_ENV_SIZE			0x800	// bhahn : 2KB for env
+
+//#define CONFIG_ENV_IS_NOWHERE
+//#define CONFIG_ENV_OVERWRITE
 
 
 /*
@@ -274,44 +297,14 @@
 //#define CONFIG_YAFFS2
 #define CONFIG_RBTREE
 
-/* additions for new relocation code, must be added to all boards */
-#define CONFIG_SYS_SDRAM_BASE	PHYS_SDRAM_1
 
-
-
-//#define CONFIG_PRELOADER
-#define CONFIG_SYS_NAND_U_BOOT_OFFS	(4 * 1024)	/* Offset to RAM U-Boot image */
-//#define CONFIG_SYS_NAND_U_BOOT_OFFS		(0)	/* Offset to RAM U-Boot image */
-
-#define CONFIG_SYS_NAND_U_BOOT_SIZE 	(512*1024)
-#define CONFIG_SYS_NAND_U_BOOT_DST		CONFIG_SYS_SDRAM_BASE 
-#define CONFIG_SYS_NAND_U_BOOT_START	CONFIG_SYS_NAND_U_BOOT_DST	/* NUB start-addr     */
-
-
-
-#define CONFIG_SYS_NAND_BAD_BLOCK_POS	0
-#define CONFIG_SYS_NAND_ECCSTEPS	(CONFIG_SYS_NAND_PAGE_SIZE / CONFIG_SYS_NAND_ECCSIZE)
-#define CONFIG_SYS_NAND_OOBSIZE	64
-#define CONFIG_SYS_NAND_ECCTOTAL	(CONFIG_SYS_NAND_ECCBYTES * CONFIG_SYS_NAND_ECCSTEPS)
-#define CONFIG_SYS_NAND_ECCPOS		{40, 41, 42, 43, 44, 45, 46, 47, \
-				 48, 49, 50, 51, 52, 53, 54, 55, \
-				 56, 57, 58, 59, 60, 61, 62, 63}
-
-
-//#define CONFIG_ENV_IS_IN_NAND
-//#define CONFIG_ENV_OFFSET		0x0080000	// bhahn : offset value in nand!!
-
-//#define CONFIG_NAND_ENV_DST		(CONFIG_SYS_SDRAM_BASE + CONFIG_SYS_NAND_U_BOOT_SIZE)
-#define CONFIG_ENV_SIZE			0x800	// bhahn : 2KB for env
-
-#define CONFIG_ENV_IS_NOWHERE
-#define CONFIG_ENV_OVERWRITE
 
 
 /* bhahn : GENERATED_GBL_DATA_SIZE is defined at build time by kbuild through lib/asm-offset.c, and written in include include/generated/generic-asm-offsets.h */
-#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_SYS_SDRAM_BASE + 0x64000 - GENERATED_GBL_DATA_SIZE) 
-//#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_NAND_ENV_DST + 0x900 - GENERATED_GBL_DATA_SIZE) 
-										 
+//#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_NAND_ENV_DST + 0x80000 - GENERATED_GBL_DATA_SIZE) 
+#define CONFIG_SYS_INIT_SP_ADDR	(CONFIG_NAND_ENV_DST + CONFIG_ENV_SIZE + 0x400 - GENERATED_GBL_DATA_SIZE) 
+#define CONFIG_SYS_SPL_SP_ADDR 	(CONFIG_SYS_NAND_U_BOOT_START + (CONFIG_SYS_NAND_BLOCK_SIZE * 5) + 0x400 )
+ 
 
 #define CONFIG_BOARD_EARLY_INIT_F
 #define BOARD_LATE_INIT
