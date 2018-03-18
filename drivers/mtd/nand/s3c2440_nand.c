@@ -121,11 +121,6 @@ static void s3c_nand_select_chip(struct mtd_info *mtd, int chip)
 	case 0:
 		ctrl &= ~S3C2440_NFCONT_REG_nCE;
 		break;
-#if 0
-	case 1:
-		ctrl &= ~4;
-		break;
-#endif
 	default:
 		return;
 	}
@@ -189,34 +184,6 @@ static int s3c_nand_device_ready(struct mtd_info *mtdinfo)
  * Written by jsgood
  */
 
-#if 0
-static void s3c_nand_enable_hwecc(struct mtd_info *mtd, int mode)
-{
-	u_long nfcont, nfconf;
-
-	/*
-	 * The original driver used 4-bit ECC for "new" MLC chips, i.e., for
-	 * those with non-zero ID[3][3:2], which anyway only holds for ST
-	 * (Numonyx) chips
-	 */
-	nfconf = readl(NFCONF) & ~NFCONF_ECC_4BIT;
-
-	writel(nfconf, NFCONF);
-
-	/* Initialize & unlock */
-	nfcont = readl(NFCONT);
-	nfcont |= NFCONT_INITECC;
-	nfcont &= ~NFCONT_MECCLOCK;
-
-	if (mode == NAND_ECC_WRITE)
-		nfcont |= NFCONT_ECC_ENC;
-	else if (mode == NAND_ECC_READ)
-		nfcont &= ~NFCONT_ECC_ENC;
-
-	writel(nfcont, NFCONT);
-}
-
-#else
 static void s3c_nand_enable_hwecc(struct mtd_info *mtd, int mode)
 {
 	u_long nfcont;
@@ -230,9 +197,6 @@ static void s3c_nand_enable_hwecc(struct mtd_info *mtd, int mode)
 
 	writel(nfcont, &nand->nfcont);
 }
-
-#endif
-
 
 
 /*
@@ -271,63 +235,6 @@ static int s3c_nand_calculate_ecc(struct mtd_info *mtd, const u_char *dat,
  * If uncorrectable errors occured, return -1.
  * Written by jsgood
  */
-
-#if 0
-static int s3c_nand_correct_data(struct mtd_info *mtd, u_char *dat,
-				 u_char *read_ecc, u_char *calc_ecc)
-{
-	int ret = -1;
-	u_long nfestat0, nfmeccdata0, nfmeccdata1, err_byte_addr;
-	u_char err_type, repaired;
-
-
-
-	struct s3c2440_nand *nand = s3c2440_get_base_nand();
-
-	/* SLC: Write ecc to compare */
-	nfmeccdata0 = (calc_ecc[1] << 16) | calc_ecc[0];
-	nfmeccdata1 = (calc_ecc[3] << 16) | calc_ecc[2];
-	writel(nfmeccdata0, NFMECCDATA0);
-	writel(nfmeccdata1, NFMECCDATA1);
-
-	/* Read ecc status */
-	nfestat0 = readl(NFESTAT0);
-	err_type = nfestat0 & 0x3;
-
-	switch (err_type) {
-	case 0: /* No error */
-		ret = 0;
-		break;
-
-	case 1:
-		/*
-		 * 1 bit error (Correctable)
-		 * (nfestat0 >> 7) & 0x7ff	:error byte number
-		 * (nfestat0 >> 4) & 0x7	:error bit number
-		 */
-		err_byte_addr = (nfestat0 >> 7) & 0x7ff;
-		repaired = dat[err_byte_addr] ^ (1 << ((nfestat0 >> 4) & 0x7));
-
-		printf("S3C NAND: 1 bit error detected at byte %ld. "
-		       "Correcting from 0x%02x to 0x%02x...OK\n",
-		       err_byte_addr, dat[err_byte_addr], repaired);
-
-		dat[err_byte_addr] = repaired;
-
-		ret = 1;
-		break;
-
-	case 2: /* Multiple error */
-	case 3: /* ECC area error */
-		printf("S3C NAND: ECC uncorrectable error detected. "
-		       "Not correctable.\n");
-		ret = -1;
-		break;
-	}
-
-	return ret;
-}
-#else
 
 static int s3c_nand_correct_data(struct mtd_info *mtd, u_char *dat,
 				 u_char *read_ecc, u_char *calc_ecc)
@@ -383,11 +290,6 @@ static int s3c_nand_correct_data(struct mtd_info *mtd, u_char *dat,
 	return ret;
 }
 
-
-
-#endif
-
-
 #endif /* CONFIG_S3C2440_NAND_HWECC */
 
 /*
@@ -411,16 +313,6 @@ static int s3c_nand_correct_data(struct mtd_info *mtd, u_char *dat,
 int board_nand_init(struct nand_chip *nand)
 {
 
-#if 0
-	static int chip_n;
-
-	if (chip_n >= MAX_CHIPS)
-		return -ENODEV;
-
-
-	NFCONT_REG = (NFCONT_REG & ~NFCONT_WP) | NFCONT_ENABLE | 0x6;
-
-#endif
 
 	u_int32_t cfg,cont;
     u_int8_t tacls, twrph0, twrph1;
