@@ -167,10 +167,10 @@
 /* may be activated as soon as s3c24x0 has print_cpuinfo support */
 /*#define CONFIG_DISPLAY_CPUINFO*/		/* Display cpu info */
 
-#define CONFIG_SYS_MEMTEST_START	0x30800000	/* memtest works on */
-#define CONFIG_SYS_MEMTEST_END		0x30801000	/* memtest for 4KB */
+#define CONFIG_SYS_MEMTEST_START	0x30000000	/* memtest works on */
+#define CONFIG_SYS_MEMTEST_END		0x30001000	/* memtest for 4KB */
 #define CONFIG_SYS_ALT_MEMTEST
-#define CONFIG_SYS_MEMTEST_SCRATCH	0x30801100
+#define CONFIG_SYS_MEMTEST_SCRATCH	0x30001100
 
 #define CONFIG_SYS_LOAD_ADDR		0x30800000
 
@@ -262,7 +262,7 @@
 #define CONFIG_SYS_NAND_U_BOOT_OFFS	(4 * 1024)	/* Offset of U-Boot image in NAND - has to be aligned to a page addr */
 
 #define CONFIG_SYS_NAND_U_BOOT_SIZE 	(512*1024)
-#define CONFIG_SYS_NAND_U_BOOT_DST		CONFIG_SYS_SDRAM_BASE 
+#define CONFIG_SYS_NAND_U_BOOT_DST		((CONFIG_SYS_SDRAM_BASE) + (8*1024*1024))
 #define CONFIG_SYS_NAND_U_BOOT_START	CONFIG_SYS_NAND_U_BOOT_DST	/* NUB start-addr     */
 
 #define CONFIG_SYS_NAND_BAD_BLOCK_POS	0
@@ -277,7 +277,8 @@
 #define CONFIG_ENV_IS_IN_NAND
 #define CONFIG_ENV_OFFSET		0x0080000	// bhahn : offset value in nand!!
 
-#define CONFIG_NAND_ENV_DST		(CONFIG_SYS_SDRAM_BASE + CONFIG_SYS_NAND_U_BOOT_SIZE)
+//#define CONFIG_NAND_ENV_DST		(CONFIG_SYS_SDRAM_BASE + CONFIG_SYS_NAND_U_BOOT_SIZE)
+#define CONFIG_NAND_ENV_DST		(CONFIG_SYS_NAND_U_BOOT_DST + CONFIG_SYS_NAND_U_BOOT_SIZE)
 #define CONFIG_ENV_SIZE			0x800	// bhahn : 2KB for env
 
 //#define CONFIG_ENV_IS_NOWHERE

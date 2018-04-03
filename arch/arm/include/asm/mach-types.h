@@ -3312,6 +3312,22 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_T5388P               3336
 #define MACH_TYPE_DINGO                3337
 #define MACH_TYPE_GOFLEXHOME           3338
+#define MACH_TYPE_WILTEK_GBOX		   6000
+
+
+#ifdef CONFIG_MACH_WILTEK_GBOX
+# ifdef machine_arch_type
+#  undef machine_arch_type
+#  define machine_arch_type	__machine_arch_type
+# else
+#  define machine_arch_type	MACH_TYPE_WILTEK_GBOX
+# endif
+# define machine_is_wiltek_gbox()	(machine_arch_type == MACH_TYPE_WILTEK_GBOX)
+#else
+# define machine_is_wiltek_gbox()	(0)
+#endif
+
+
 
 #ifdef CONFIG_ARCH_EBSA110
 # ifdef machine_arch_type
@@ -15288,6 +15304,7 @@ extern unsigned int __machine_arch_type;
 #else
 # define machine_is_smdk2460()	(0)
 #endif
+
 
 #ifdef CONFIG_MACH_SMDK2440
 # ifdef machine_arch_type

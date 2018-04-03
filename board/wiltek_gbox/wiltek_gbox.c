@@ -161,7 +161,7 @@ int board_late_init(void)
 int board_init(void)
 {
 	/* arch number of SMDK2440-Board */
-	gd->bd->bi_arch_number = MACH_TYPE_S3C2440;
+	gd->bd->bi_arch_number = MACH_TYPE_WILTEK_GBOX;
 
 	/* adress of boot parameters */
 	gd->bd->bi_boot_params = 0x30000100;

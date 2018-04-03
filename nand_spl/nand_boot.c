@@ -148,11 +148,11 @@ static int nand_read_page(struct mtd_info *mtd, int block, int page, uchar *dst)
 	/* No malloc available for now, just use some temporary locations
 	 * in SDRAM
 	 */
-#ifdef CONFIG_WILTEK_GBOX
-	ecc_calc = (u_char *)(CONFIG_SYS_SDRAM_BASE + 0x800000);
-#else
+//#ifdef CONFIG_WILTEK_GBOX
+//	ecc_calc = (u_char *)(CONFIG_SYS_SDRAM_BASE + 0x800000);
+//#else
 	ecc_calc = (u_char *)(CONFIG_SYS_SDRAM_BASE + 0x10000);
-#endif
+//#endif
 	ecc_code = ecc_calc + 0x100;
 	oob_data = ecc_calc + 0x200;
 
